@@ -1,0 +1,4 @@
+docker compose up
+
+or with -d, the docker compose will run in a background, it's running in a detached mode
+docker compose up -d
