@@ -2,3 +2,8 @@ docker compose up
 
 or with -d, the docker compose will run in a background, it's running in a detached mode
 docker compose up -d
+
+//Using Azure
+az login (login to azure)
+az account set --subscription "[name or subscriptionId]" (choose subscription)
+az account show (show the subscription you went for)

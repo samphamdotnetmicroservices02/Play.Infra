@@ -33,3 +33,20 @@ https://nuget.pkg.github.com/
 
 after add to nuget, use dotnet nuget list source to check the result
 ```
+
+## Creating the Azure resource group
+```powershell
+$appname="playeconomy"
+az group create --name $appname --location eastus
+
+az group create: create azure resource group
+--location: you can choose the location closest to you to reduce latency
+
+Check resource group was created, go to azure -> subscriptions -> Resource groups
+
+One quick note for the case of this course, I have decided to put all the resources for all micrservices in just one resource
+group, but in your case, it could be that you want to define different resource groups for different microservices. So that
+will give you a much better level of access control to the resources that each microservice uses. In our case, we are going
+to be actually sharing a bunch of things as you are going to see. So I am just going to keep things in one resource group,
+which is going to be these play economy resource group.
+```
