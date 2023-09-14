@@ -93,6 +93,27 @@ dbAccountName="samphamplayeconomy"
 az cosmosdb create --name $dbAccountName --resource-group $appname --kind MongoDB --enable-free-tier
 ```
 
+## Creating the Service Bus namespace
+```powershell
+$serviceBusName="samphamplayeconomyservicebus"
+az servicebus namespace create --name $serviceBusName --resource-group $appname --sku Standard
+
+--sku: Azure Service Bus supports multiple SKUs that offer different levels of features, and of course, will cost
+more or less money depending on what features you want to accquire. There are at least three SKUs here available
+at the time as I am recording this lesson, which are basic, standard, and premium. And the basic one that costs 
+less money. However, in order for you to be able to use Service Bus with MassTransit, you need to have support
+for both queues and topics in Service Bus. And unfortunately, tocpics are not supported in the basic SKU. So
+you have to use at least the Standard SKU, so that you are able to use MassTransit with Service Bus.
+
+
+to check service bus you just created, navigate to subscription -> your resource group -> samphamplayeconomyservicebus
+```
+
+```mac
+serviceBusName="samphamplayeconomyservicebus"
+az servicebus namespace create --name $serviceBusName --resource-group $appname --sku Standard
+```
+
 ## Creating the Container Registry
 ```powershell
 $acrName="samphamplayeconomyacr"
