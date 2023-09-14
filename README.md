@@ -7,6 +7,22 @@ $owner="samphamdotnetmicroservices02"
 $gh_pat="[PAT HERE]"
 
 dotnet nuget add source --username USERNAME --password $gh_pat --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$owner/index.json"
+
+--username: the username that you are going to use to connect to GitHub packages. Now the interesting thing here
+is that when you use personal access tokens, it does not really matter what username you use here, because the
+access tokens has all the information needed to authenticate you. So you can use anything here, I will just put
+username
+
+--password: the password is going to be our brand new GitHub personal access token
+
+--store-password-in-clear-text: This is a requirement from NuGet in terms of how to store this password in the local box.
+
+--name: The name is going to be the name of the source. Lets name it just GitHub
+
+lastly, you have to specify the address of this new source. So the address for GitHub packages has to be 
+https://nuget.pkg.github.com/
+
+after add to nuget, use "dotnet nuget list source" to check the result
 ```
 
 ```mac
@@ -16,23 +32,10 @@ gh_pat="[PAT HERE]"
 dotnet nuget add source --username USERNAME --password $gh_pat --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$owner/index.json"
 ```
 
-```
---username: the username that you're going to use to connect to GitHub packages. Now the interesting thing here
-is that when you use personal access tokens, it doesn't really matter what username you use here, because the
-access tokens has all the information needed to authenticate you. So you can use anything here, I'll just put
-username
-
---password: the password is going to be our brand new GitHub personal access token
-
---store-password-in-clear-text: This's a requirement from NuGet in terms of how to store this password in the local box.
-
---name: The name is going to be the name of the source. Let's name it just GitHub
-
-lastly, you have to specify the address of this new source. So the address for GitHub packages has to be 
-https://nuget.pkg.github.com/
-
-after add to nuget, use dotnet nuget list source to check the result
-```
+## Using Azure
+az login (login to azure)
+az account set --subscription "[name or subscriptionId]" (choose subscription)
+az account show (show the subscription you went for)
 
 ## Creating the Azure resource group
 ```powershell
@@ -88,4 +91,24 @@ see the "samphamplayeconomy" which is your cosmos db
 ```mac
 dbAccountName="samphamplayeconomy"
 az cosmosdb create --name $dbAccountName --resource-group $appname --kind MongoDB --enable-free-tier
+```
+
+## Creating the Container Registry
+```powershell
+$acrName="samphamplayeconomyacr"
+az acr create --name $acrName --resource-group $appname --sku Basic
+
+--sku: ACR has as any other Azure service, there are tiers or levels of service that you can get with the ACR service.
+So ACR has three levels at the time as I am recording this lesson, which are basic, standard, and premium. And so the
+basic offering, actually, I mean all these offerings have the same programmatic and access and features, but it is just
+that the more cheaper they are, they offer a less amount of storage for your containers and they do not offer that
+much throughput for either pulling or pushing your images to the ACR. So for the purpose of this course for learning
+purposes, using the basic tier is totally fine, that will fork just great for you. But as you move into an actual
+production workload, you may want to consider using the standard SKU, because it has increased storage for your
+images of which you are going to grade a lot and increase it throughput to pull ambush images.
+```
+
+```mac
+acrName="samphamplayeconomyacr"
+az acr create --name $acrName --resource-group $appname --sku Basic
 ```
