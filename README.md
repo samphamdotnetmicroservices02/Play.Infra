@@ -133,3 +133,50 @@ images of which you are going to grade a lot and increase it throughput to pull 
 acrName="samphamplayeconomyacr"
 az acr create --name $acrName --resource-group $appname --sku Basic
 ```
+
+## Creating the AKS cluster
+```powershell
+$aksName="samphamplayeconomyaks"
+
+az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --atach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+
+-n: aks name
+-g: resource group name 
+
+--node-vm-size Standard_B2s: The next thing I need to specify is the VM size or the SKU. So as you might know, there are multiple types
+of virtual machine sizes in Azure. There are dozens and dozens of ones which have different specs in terms of CPU, RAM, and GPU,
+disk space, all these things, and you can choose from them. And a Kubernetes cluster is going to need virtual machines, even if you are
+not going to be seeing that, really, it is a little bit abstracted from you. But the cluster will need those virtual machines to put
+your containers in that, right? And run them in there. So you have to choose some sort of size of the virtual machine. And so, for
+our learning purposes, I have chosen the size that I think is the cheapest one that we can use with the specs that are going to be 
+useful for our purpose (Standard_B2s).
+And it oould be the case also that this size (Standard_B2s) is not available in your subscription because it depends on subscriptions are
+a bit special and they do not have all the SKUs available. And also, it could be that it is not available for the region that you are 
+trying to use. So I am using, If I am not wrong, I am using eastus
+
+--node-count: this is the number of nodes or VMs that are going to be assigned to the Kubernetes cluster. So you can go as low as one
+and as high, I do not actually know how many you, there is a limit but you cannot go unlimited, right? Now, for our purposes, we are
+going to be choosing two. We need two nodes because the more containers that you add to your cluster, the more CPU and RAM is being
+used from that machine and that machine does not have unlimited resources, so at some point you have to jump into another VM to be
+able to properly distribute all your containers. So we will not just be deploying our own microservice containers in here but also
+the containers needed for a few other services that we are going to be using or deploying into Kubernetes, so we have enough of those
+to require at least two VMs. You could use more if you want to but two should be good enough.
+
+--atach-acr $acrName: The next thing that we are going to need is one more argument to grant permission to this AKS cluster to connect to our ACR. Remember
+that a moment, in a previous lesson, we created a container registry. Now our Kubernetes cluster is going to need to connect to that
+registry to download the container images into the nodes that are part of the cluster, so that it can run the containers. To make this
+simpler and just grant access right away to the cluster as soon as it is created.
+
+--enable-oidc-issuer: this is tied to this feature of AD workload identities. This argument is required to enable that feature. Like
+I said, we are goint to talk more about this later on.
+
+--enable-workload-identity: we talk about this in a future lessons.
+
+--generate-ssh-keys: you can authenticate and connect to the AKS cluster.
+```
+
+```mac
+aksName="samphamplayeconomyaks"
+
+az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --atach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+```
