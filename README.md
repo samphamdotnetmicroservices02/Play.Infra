@@ -138,7 +138,15 @@ az acr create --name $acrName --resource-group $appname --sku Basic
 ```powershell
 $aksName="samphamplayeconomyaks"
 
-az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --atach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --attach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+
+go to your subscriptions, your resource groups, your aks to check your aks cluster.
+
+az aks get-credentials --name $aksName --resource-group $appname
+
+kubectl version
+
+kubectl cluster-info
 
 -n: aks name
 -g: resource group name 
@@ -162,7 +170,7 @@ able to properly distribute all your containers. So we will not just be deployin
 the containers needed for a few other services that we are going to be using or deploying into Kubernetes, so we have enough of those
 to require at least two VMs. You could use more if you want to but two should be good enough.
 
---atach-acr $acrName: The next thing that we are going to need is one more argument to grant permission to this AKS cluster to connect to our ACR. Remember
+--attach-acr $acrName: The next thing that we are going to need is one more argument to grant permission to this AKS cluster to connect to our ACR. Remember
 that a moment, in a previous lesson, we created a container registry. Now our Kubernetes cluster is going to need to connect to that
 registry to download the container images into the nodes that are part of the cluster, so that it can run the containers. To make this
 simpler and just grant access right away to the cluster as soon as it is created.
@@ -173,10 +181,26 @@ I said, we are goint to talk more about this later on.
 --enable-workload-identity: we talk about this in a future lessons.
 
 --generate-ssh-keys: you can authenticate and connect to the AKS cluster.
+
+az aks get-credentials: Get credentials from Kubernetes into you local box, so that we can connect to the cluster. Connect to the cluster
+--name $aksName: name of the Kubernetes cluster
+
+kubectl version: kubectl (kube control) command comes from az or docker desktop, this verifies that you are able to use the CLI of Kubernetes.
+So, there is a, just like we have a CLI for .NET and a CLI for Azure, there is a CLI also for Kubernetes (kubectl). This command just verifies
+that things are working properly with Kubernetes. (run command az aks get-credentials to connect the cluster and after run this command)
+
+kubectl cluster-info: to check that things are working properly. This will give you a few more details about different components of Kubernetes
+like the Kubernetes control plane, core DNS, metric server 
 ```
 
 ```mac
 aksName="samphamplayeconomyaks"
 
-az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --atach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --attach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
+
+az aks get-credentials --name $aksName --resource-group $appname
+
+kubectl version
+
+kubectl cluster-info
 ```
