@@ -158,7 +158,7 @@ not going to be seeing that, really, it is a little bit abstracted from you. But
 your containers in that, right? And run them in there. So you have to choose some sort of size of the virtual machine. And so, for
 our learning purposes, I have chosen the size that I think is the cheapest one that we can use with the specs that are going to be 
 useful for our purpose (Standard_B2s).
-And it oould be the case also that this size (Standard_B2s) is not available in your subscription because it depends on subscriptions are
+And it would be the case also that this size (Standard_B2s) is not available in your subscription because it depends on subscriptions are
 a bit special and they do not have all the SKUs available. And also, it could be that it is not available for the region that you are 
 trying to use. So I am using, If I am not wrong, I am using eastus
 
@@ -170,10 +170,10 @@ able to properly distribute all your containers. So we will not just be deployin
 the containers needed for a few other services that we are going to be using or deploying into Kubernetes, so we have enough of those
 to require at least two VMs. You could use more if you want to but two should be good enough.
 
---attach-acr $acrName: The next thing that we are going to need is one more argument to grant permission to this AKS cluster to connect to our ACR. Remember
-that a moment, in a previous lesson, we created a container registry. Now our Kubernetes cluster is going to need to connect to that
-registry to download the container images into the nodes that are part of the cluster, so that it can run the containers. To make this
-simpler and just grant access right away to the cluster as soon as it is created.
+--attach-acr $acrName: The next thing that we are going to need is one more argument to grant permission to this AKS cluster to connect 
+to our ACR. Remember that a moment, in a previous lesson, we created a container registry. Now our Kubernetes cluster is going to need 
+to connect to that registry to download the container images into the nodes that are part of the cluster, so that it can run the 
+containers. To make this simpler and just grant access right away to the cluster as soon as it is created.
 
 --enable-oidc-issuer: this is tied to this feature of AD workload identities. This argument is required to enable that feature. Like
 I said, we are goint to talk more about this later on.
@@ -187,7 +187,7 @@ az aks get-credentials: Get credentials from Kubernetes into you local box, so t
 
 kubectl version: kubectl (kube control) command comes from az or docker desktop, this verifies that you are able to use the CLI of Kubernetes.
 So, there is a, just like we have a CLI for .NET and a CLI for Azure, there is a CLI also for Kubernetes (kubectl). This command just verifies
-that things are working properly with Kubernetes. (run command az aks get-credentials to connect the cluster and after run this command)
+that things are working properly with Kubernetes. (run command az aks get-credentials to connect the cluster and after that, run this command)
 
 kubectl cluster-info: to check that things are working properly. This will give you a few more details about different components of Kubernetes
 like the Kubernetes control plane, core DNS, metric server 
