@@ -204,3 +204,11 @@ kubectl version
 
 kubectl cluster-info
 ```
+
+## Creating the Azure Key Vault
+```powershell
+$keyVaultName="samphamplayeconomykv"
+az keyvault create -n $keyVaultName -g $appname
+
+-n: the name of Key Vault
+```
