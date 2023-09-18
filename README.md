@@ -211,4 +211,7 @@ $keyVaultName="samphamplayeconomykv"
 az keyvault create -n $keyVaultName -g $appname
 
 -n: the name of Key Vault
+
+after that, go to Azure Cloud to set value of secret based on each microservice like MongoDbSettings__ConnectionString, 
+ServiceBusSetting__ConnectionString and change underscores "__" to double dash "--"
 ```
