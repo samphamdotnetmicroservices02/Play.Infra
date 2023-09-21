@@ -215,3 +215,87 @@ az keyvault create -n $keyVaultName -g $appname
 after that, go to Azure Cloud to set value of secret in "Secrets" tab of $keyVaultName you just created based on each microservice like
 MongoDbSettings__ConnectionString, ServiceBusSetting__ConnectionString and change underscores "__" to double dash "--"
 ```
+
+## Installing Emissary-ingress
+https://www.getambassador.io/docs/emissary
+https://www.getambassador.io/docs/emissary/latest/topics/install/helm
+
+```powershell
+helm repo add datawire https://app.getambassador.io (confirm that by using "helm repo list")
+helm repo update
+
+The first thing that we have to do is to let our helm tool locally know about the helm repository where the helm charts that we need, actually exist.
+And in this case, that location is going to be in https://app.getambassador.io. So that is where the helm chart is. So we have to let our helm
+repo know about that location.
+
+
+kubectl apply -f https://app.getambassador.io/yaml/emissary/3.8.1/emissary-crds.yaml 
+kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext -n emissary-system
+
+We have to configure the Kubernetes cluster to support both the "getambassador.io/v3alpha1" and "getambassador.io/v2" versions of configuration resources.
+So this is a required step, probably temporal for now as people is switching between v2 and v3 and alpha one. So what we are going to do is just follow
+these commands as they are.
+
+kubectl apply -f https://app.getambassador.io/yaml/emissary/3.8.1/emissary-crds.yaml: this installs what we know as custom resources. Custom resource 
+definitions for emissary-ingress is one type of resource in kubernetes.
+
+kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext -n emissary-system: wait for those resource to be available in the cluster.
+Also notice that we will be doing this in to the "-n emissary-system" namespace. So this is the namespace that one of the name spaces that emissary-ingress
+will be using in the kubernetes cluster for all of their components. After run this command we will see "deployment.apps/emissary-apiext condition met",
+it means those resources are ready to go in the cluster.
+
+
+$emissarynamespace="emissary"
+$apiGetwayAppname="samphamplayeconomyapigateway"
+helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
+
+helm list -n emissary (verify Helm release)
+
+kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w
+
+kubectl get pods -n emissary (check your pod with emissary)
+
+kubectl get service emissary-ingress -n emissary
+
+
+the step of installing emissary-ingress in the box using helm.
+
+helm install ...: "helm install emissaray-ingress", so this is going to create what we know as a release and that Helm release is going to be named
+emissary-ingress and it is coming from the "datawire/emissary-ingress" helm repository. And then it is going to be installed as it is saying right here
+into the emissary namespace (-n emissary). And if that name space does not exist, it is going to create it the very first time "--create-namespace"
+
+--set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name": specify an annotation that is going to be able to tell the AKS infrastructure
+how to associate the DNS address with the IP address that is going to provision for our API gateway. Remember that there is going to be just one IP address
+that our clients are going to use to reach out to the API gateway and from there Api gateway routes into the internal microservices, but we do not want them
+to use just IP addresses. We want them to use a proper DNS name to reach out to the API gateway. So this annotation that we are going to write is what is
+going to enable that. "--set" This allows to override values in that chart that we are installing. So there are multiple values that you can override and 
+one of them is the annotations "service.annotations...". And then goes equals to whatever dns we want to provide into our public IP address. So that DNS
+that we are going to use is $emissarynamespace (This value must be unique across the Azure region you are using. If you use a value already in use in your
+region, Azure will not provision a public IP for Emissary-Ingress and you will not be able to access you Api gateway). So like I said this specific portion
+here just overrides one of the values of this helm chart with another value that I want to use there which will be blank if we did not specify it. But with
+this we add a DNS name to our IP addresses for our API gateway
+
+kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w: check the status of rollout
+
+kubectl get pods -n emissary: at least 4 emissary, one of the emissary display on your terminal is agent, and others are pods
+```
+
+```mac
+helm repo add datawire https://app.getambassador.io (confirm that by using "helm repo list")
+helm repo update
+
+kubectl apply -f https://app.getambassador.io/yaml/emissary/3.8.1/emissary-crds.yaml 
+kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext -n emissary-system
+
+emissarynamespace="emissary"
+apiGetwayAppname="samphamplayeconomyapigateway"
+helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
+
+helm list -n emissary (verify Helm release)
+
+kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w
+
+kubectl get pods -n emissary (check your pod with emissary)
+
+kubectl get service emissary-ingress -n emissary
+```
