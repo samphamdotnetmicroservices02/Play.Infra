@@ -309,3 +309,9 @@ kubectl get pods -n $emissarynamespace (check your pod with emissary)
 
 kubectl get service emissary-ingress -n $emissarynamespace
 ```
+
+## Configuring Emissary-ingress routing
+```powershell
+kubectl apply -f ./emissary-ingress/listener.yaml -n $emissarynamespace
+kubectl apply -f ./emissary-ingress/mapping.yaml -n $emissarynamespace
+```
