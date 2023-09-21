@@ -217,8 +217,9 @@ MongoDbSettings__ConnectionString, ServiceBusSetting__ConnectionString and chang
 ```
 
 ## Installing Emissary-ingress
-https://www.getambassador.io/docs/emissary
+https://helm.sh/docs/intro/install/
 https://www.getambassador.io/docs/emissary/latest/topics/install/helm
+follow this guideline to install helm: https://learn.dotnetacademy.io/courses/take/net-microservices-cloud/lessons/38615223-installing-helm
 
 ```powershell
 helm repo add datawire https://app.getambassador.io (confirm that by using "helm repo list")
@@ -249,13 +250,13 @@ $emissarynamespace="emissary"
 $apiGetwayAppname="samphamplayeconomyapigateway"
 helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
 
-helm list -n emissary (verify Helm release)
+helm list -n $emissarynamespace (verify Helm release from command above)
 
 kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w
 
-kubectl get pods -n emissary (check your pod with emissary)
+kubectl get pods -n $emissarynamespace (check your pod with emissary)
 
-kubectl get service emissary-ingress -n emissary
+kubectl get service emissary-ingress -n $emissarynamespace
 
 
 the step of installing emissary-ingress in the box using helm.
@@ -285,7 +286,7 @@ are able to use to reach out our Api gateway and from that into our microservice
 associated to this external IP.
 
 check your Api Gateway on Azure: you will see the EXTERNAL-IP from the command above, for example EXTERNAL-IP is: "20.237.70.13". Navigating to your resource
-group -> hit "MC_${resource_group}_${aksName}_${location}", there are many kubernetes-${guid} there, check each of them with the "IP address" you just created
+group -> hit "MC_${resource_group}_${aksName}_${location}", there are many "kubernetes-${guid}" there, check each of them with the "IP address" you just created
 Api gateway for example EXTERNAL-IP is "20.237.70.13", and next to "IP address" is DNS name.
 ```
 
@@ -300,11 +301,11 @@ emissarynamespace="emissary"
 apiGetwayAppname="samphamplayeconomyapigateway"
 helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
 
-helm list -n emissary (verify Helm release)
+helm list -n $emissarynamespace (verify Helm release)
 
 kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w
 
-kubectl get pods -n emissary (check your pod with emissary)
+kubectl get pods -n $emissarynamespace (check your pod with emissary)
 
-kubectl get service emissary-ingress -n emissary
+kubectl get service emissary-ingress -n $emissarynamespace
 ```
