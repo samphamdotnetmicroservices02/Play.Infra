@@ -1,0 +1,55 @@
+# So since the cluster issuer is ready, now we have to configure a few things to make sure that the http01 acme challenge will 
+# work for us. So since we will be using the http01 acme challenge, we know that cert manager will spin up a temporal port in
+# our cluster with a file that the challenge HTTP request will be looking for. But for that HTTP request to reach our temporal
+# port from the outside world, we need to have a Kubernetes service that can select the port that will receive the request.
+# And since we are using the emissary ingress API gateway, we also need mapping that will route that request from the Api gateway
+# into this service.
+
+# The first thingis like I said that a Kubernetes service that's going to be able to select the temporal port that has to receive
+# the HTTP request.
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-challenge-service
+spec:
+  ports:
+  # what is the port that we specify here? Well, the challenge request that is going to be coming from cert manager from the outside 
+  # world is actually going to land in the standard HTTP 80 port. So port 80 is the one that's going to be used from the outside to talk
+  # our cluster. 
+  - port: 80
+    # And then what is going to be the target port? So the target port is the port of that temporal port that I mentioned, and 
+    # that's a very specific port that's already been predefined and that port is going to be 8089. So that's a port that the port expects.
+    targetPort: 8089
+  selector:
+    # Finnaly you have to define the correct selector here. So that port will be born with a very specific label that is named
+    # acme.cert-manager.io/http01-solver: "true". So when cert manager spins up that port, it will attach this label with that sepcific
+    # value into it. So that is how this service is going to be able to select that port as it tries to figure out what port to send the
+    # request into.
+    acme.cert-manager.io/http01-solver: "true"
+---
+# Like I said, since we are running behind an API gateway, we need to specify a mapping so that we can route things from the gateway into
+# this service.
+
+# Since we have a mapping in place for another purpose (mapping.yaml), let's copy it and modify something
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: acme-challenge-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  # the prefix has to change, this is a very specific path that this acme challenge is going to be looking for. So you have to define this path
+  # exactly as it is looking for. So it's going to be /.well-known/acme-challenge/
+  prefix: /.well-known/acme-challenge/
+  # And in this case, we also have define this rewrite element for which we're going to specify just an empty string. This means that when the 
+  # request comes into the cluster, the path is not going to be rereading in any way. It has to be using exactly this path that's specified
+  # right here "/.well-known/acme-challenge/". So it will be the domain name and then the /.well-known and then /acme-challenge. So no
+  # rewriting that path at all.
+  rewrite: ""
+  # And finally we have to specify what is going to be the service that's going to receive the request. And as we know the service we just created
+  # over here "acme-challenge-service"
+  service: acme-challenge-service
+
+# To recap this piece, we have defined a service that will be receiving the request for the http01 challenge in port 80. And that's going to direct
+# that request into the target port 8089, which is the port of the temporal port. And it will select that port by looking for this, a label
+# "acme.cert-manager.io/http01-solver", which should have the value true in the temporal port
+# And then in order to get that service, we have to go via this mapping

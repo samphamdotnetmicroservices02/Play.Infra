@@ -8,6 +8,20 @@ $gh_pat="[PAT HERE]"
 
 dotnet nuget add source --username USERNAME --password $gh_pat --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$owner/index.json"
 
+dotnet nuget list source (check result)
+```
+
+```mac
+owner="samphamdotnetmicroservices02"
+gh_pat="[PAT HERE]"
+
+dotnet nuget add source --username USERNAME --password $gh_pat --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$owner/index.json"
+
+dotnet nuget list source
+
+dotnet nuget list source (check result)
+```
+
 --username: the username that you are going to use to connect to GitHub packages. Now the interesting thing here
 is that when you use personal access tokens, it does not really matter what username you use here, because the
 access tokens has all the information needed to authenticate you. So you can use anything here, I will just put
@@ -23,14 +37,6 @@ lastly, you have to specify the address of this new source. So the address for G
 https://nuget.pkg.github.com/
 
 after add to nuget, use "dotnet nuget list source" to check the result
-```
-
-```mac
-owner="samphamdotnetmicroservices02"
-gh_pat="[PAT HERE]"
-
-dotnet nuget add source --username USERNAME --password $gh_pat --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$owner/index.json"
-```
 
 ## Using Azure
 az login (login to azure)
@@ -344,3 +350,10 @@ variable that we have in emissary $emissarynamespace. And since this name space 
 kubectl get pods -n $emissarynamespace: check api gateway after run command above "helm install cert-manager ...". The main pod is cert-manager-{numbers}-..., 
 for example "cert-manager-64d969474b-jg6lc". And then ther's usually two more pods that we will not get really into details in this course, but these are
 three pods that we expect to see up and running for cert-manager.
+
+## Creating the cluster issuer
+```powershell
+kubectl apply -f ./cert-manager/cluster-issuer.yaml -n $emissarynamespace
+
+kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
+```
