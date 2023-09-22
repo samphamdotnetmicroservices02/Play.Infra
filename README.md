@@ -315,3 +315,32 @@ kubectl get service emissary-ingress -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/listener.yaml -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/mapping.yaml -n $emissarynamespace
 ```
+
+## Installing Cert-manager
+https://cert-manager.io/docs/installation/helm/
+
+```powershell
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+helm install cert-manager jetstack/cert-manager --version v1.13.0 --set installCRDs=true --namespace $emissarynamespace
+
+kubectl get pods -n $emissarynamespace (check api gateway after run command above)
+```
+
+"helm repo add", "helm repo update": Just like we did with emissary-ingress, we also need to first add the corresponding Helm repository that we will calling jetstack, so that our local
+Helm installation knows how to fetch Helm charts that are needed for cert-manager.
+
+helm install cert-manager jetstack/cert-manager: "helm install" is installation of Helm chart into our box that we're going to name "cert-manager",
+and this is coming from "jetstack/cert-manager" repository. "--set installCRDs=true" is just overriding a value in the helm chart where we want
+to say that we want to automatically install the custom resource definitions automatically. So that way we don't have to run yet another Kubernetes line to
+install the customer resource definitions. "--namespace cert-manager --create-namespace" which by default would put all cert-manager reosurces in a 
+brand new cert-manager namespace, however having cert-manager in a different namespace than the one use to generate your first certificate would likely cause
+issues with initialization that cert-manager must perform to ensure that we own the domain that will use in our certificates. For this reason and to keep
+things simple, we will just place cert-manager in the same namespace we are using for emissary. After the first certificate is generated, no more validation
+is needed and you will be able to generate certificates in any other namespace. So since that is the case, what we're going to do is just grab the name space
+variable that we have in emissary $emissarynamespace. And since this name space should exist by now we will remove this "--create-namespace"
+
+kubectl get pods -n $emissarynamespace: check api gateway after run command above "helm install cert-manager ...". The main pod is cert-manager-{numbers}-..., 
+for example "cert-manager-64d969474b-jg6lc". And then ther's usually two more pods that we will not get really into details in this course, but these are
+three pods that we expect to see up and running for cert-manager.
