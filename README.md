@@ -390,5 +390,5 @@ use in Kubernetes with emissary ingress.
 ```powerhsell
 kubectl apply -f ./emissary-ingress/host.yaml -n $emissarynamespace
 
-after this step, you can use HTTPS for Api gateway and configure something for each microservice
+after this step, you can use HTTPS for Api gateway and configure forwarded headers for each microservice
 ```
