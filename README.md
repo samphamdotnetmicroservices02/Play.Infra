@@ -389,4 +389,6 @@ use in Kubernetes with emissary ingress.
 ## Enabling TLS and HTTPS
 ```powerhsell
 kubectl apply -f ./emissary-ingress/host.yaml -n $emissarynamespace
+
+after this step, you can use HTTPS for Api gateway and configure something for each microservice
 ```
