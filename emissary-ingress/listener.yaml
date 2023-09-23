@@ -29,3 +29,23 @@ spec:
       # specific namespace. And so whichever hosts we're going to associate to this listener, has to be in the same namespace. That's what
       # from SELF means here.
       from: SELF
+
+---
+# after configuring host.yaml: because what we have to do now is to specify another listener for the https traffic
+apiVersion: getambassador.io/v3alpha1
+kind: Listener
+metadata:
+  # In this case let's give it the name of https-listener
+  name: https-listener
+spec:
+  # Just as before, the port that we specify here is not the actual HTTPS port that our clients are going to use. It's just a port that 
+  # emissary-ingress uses internally so that requests can contact emissary-ingress. But in this case, it's going to be for HTTPS traffic.
+  # So you have to use a different port, so it's going to be in our case 8443
+  port: 8443
+  protocol: HTTPS
+  securityModel: XFP # X-Forwarded-Proto
+  hostBinding:
+    namespace:
+      from: SELF
+# Like I said, this listener specifies that this listener can be bound only to hosts that are defined in the very same namespace as the listener, 
+# which in our case is the emissary namespace.

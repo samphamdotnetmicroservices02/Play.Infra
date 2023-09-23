@@ -385,3 +385,8 @@ and it comes from tls-certificate.yaml "spec.secretName". "-o yaml" to see the y
 you will see a very long string of encoded characters coming from "data:tls.crt", this contains all the data for the crt portion of the generated
 certificate. And the "data:tls.key", this is the other big part of that certificate. And this is what we expect for that certificate that we can
 use in Kubernetes with emissary ingress.
+
+## Enabling TLS and HTTPS
+```powerhsell
+kubectl apply -f ./emissary-ingress/host.yaml -n $emissarynamespace
+```
