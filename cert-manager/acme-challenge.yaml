@@ -52,4 +52,5 @@ spec:
 # To recap this piece, we have defined a service that will be receiving the request for the http01 challenge in port 80. And that's going to direct
 # that request into the target port 8089, which is the port of the temporal port. And it will select that port by looking for this, a label
 # "acme.cert-manager.io/http01-solver", which should have the value true in the temporal port
-# And then in order to get that service, we have to go via this mapping
+# And then in order to get that service, we have to go via this mapping. That's going to be looking for this very sepcific that 
+# "./wellknown/acme-challenge" prefix, and it's going to select the service that we just defined.

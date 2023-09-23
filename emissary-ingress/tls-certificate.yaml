@@ -1,0 +1,24 @@
+# After applying cert-manager/acme-challenge.yaml, cert-manaer/cluster-issuer.yaml, it is time to actually define the certificate that's we'll be using for
+# the TLS termination purposes.
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: playeconomy-tls-cert
+spec:
+  # The first thing here is going to be the secret name. So, because this certificate has to be stored as a Kubernetes secret, so that later on emissary 
+  # ingress can read the secret and use the certificate.
+  secretName: playeconomy-tls
+  # The next thing is going to be issuer ref. This here refers to the cluster issuer that we created a momengt ago. So what's the name that we have to
+  # use here? Go back to cluster-issuer.yaml, select metadata.name (letsencrypt-prod)
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  # DNS name which is actually array, and so this defines the DNS names really that are going to be associated to the generated certificate. So this has to
+  # contain the exact domain name that the certificate is being generated for. So in our case, that would be, if we go back to acme-challenge.yaml,
+  # that would be our host name "spec.hostName" (samphamplayeconomyapigateway.eastus.cloudapp.azure.com)
+  dnsNames: 
+    - "samphamplayeconomyapigateway.eastus.cloudapp.azure.com"
+
+# And that's pretty much what you need to do in order to defin a certificate. And you'll see in future lessons how easy it is to just keep creating this
+# certificates for other purposes as we move on.

@@ -356,4 +356,32 @@ three pods that we expect to see up and running for cert-manager.
 kubectl apply -f ./cert-manager/cluster-issuer.yaml -n $emissarynamespace
 
 kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
+
+kubectl apply -f ./cert-manager/acme-challenge.yaml -n $emissarynamespace
 ```
+
+## Creating TLS certificate
+```powershell
+kubectl apply -f ./emissary-ingress/tls-certificate.yaml -n $emissarynamespace
+
+kubectl get certificate -n $emissarynamespace (verify your command above)
+kubectl describe certificate playeconomy-tls-cert -n $emissarynamespace (check detail your certificate)
+kubectl get secret -n $emissarynamespace
+kubectl get secret playeconomy-tls -n $emissarynamespace -o yaml
+```
+
+"kubectl apply -f ./emissary-ingress/tls-certificate.yaml ...": This will kick off the whole process of the acme challenge, acme http01 challenge. 
+So that cert manager is going to go ahead and try to verify that we actually own this domain that we claim that we own by sending that request 
+into our cluster via the API gateway and then into the service and into this temporal port. And when all of that is resolved, cert managaer 
+should be able to go ahead and provision the certificate that we have requested.
+
+"kubectl describe certificate playeconomy-tls-cert ...": the "playeconomy-tls-cert" is the name after you run "kubectl get certificate ...", or
+the name you define tls-certificate.yaml (metadata.name)
+
+"kubectl get secret -n $emissarynamespace": see secret that has been created
+
+"kubectl get secret playeconomy-tls -n $emissarynamespace -o yaml": get detail your specified secret. "playeconomy-tls" is one of the secrets
+and it comes from tls-certificate.yaml "spec.secretName". "-o yaml" to see the yaml view of this Kubernetes resource. After running this command
+you will see a very long string of encoded characters coming from "data:tls.crt", this contains all the data for the crt portion of the generated
+certificate. And the "data:tls.key", this is the other big part of that certificate. And this is what we expect for that certificate that we can
+use in Kubernetes with emissary ingress.
