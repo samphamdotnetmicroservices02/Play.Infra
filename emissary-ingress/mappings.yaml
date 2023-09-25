@@ -55,4 +55,18 @@ spec:
   service: trading-service.trading
   # Trading needs this "allow_upgrade" to allow web socket connections from the frontend portal through the gateway to the microservice
   allow_upgrade:
-    - websocket 
+    - websocket
+
+---
+# We make sure that we do have a mapping in our Api gateway, so that the FE can be reachable at all.
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: frontend-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  # This prefix, there's not really a need to go into any sub path, because we want the frontend to live at the very root of the port of the 
+  # Api gateway. So we use "/" so that FE will be reachable directly at the root.
+  prefix: /
+  # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
+  service: frontend-client.frontend
