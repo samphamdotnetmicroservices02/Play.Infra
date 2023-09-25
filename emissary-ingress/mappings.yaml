@@ -23,3 +23,13 @@ spec:
   # namespace, in this case, it'soing to be "identity (identity-service.identity)". Okay, so just make sure you have to define this namespace because both things
   # are not in the same namespace.
   service: identity-service.identity
+
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: catalog-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  prefix: /catalog-svc/
+  service: catalog-service.catalog
