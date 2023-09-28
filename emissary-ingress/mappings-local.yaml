@@ -1,72 +1,55 @@
-# a mapping is what you use to map a resource into a service in emissary-ingress or in our case, we're mapping a path into a microservice
 apiVersion: getambassador.io/v3alpha1
 kind: Mapping
 metadata:
-  # This is going to be the mapping for our identity micro-service routes. So we will be creating one of these mappings for each of our
-  # microservices.
   name: identity-mapping
 spec:
-  # This one here reflects wichi is going to be the host that his mapping is going to be associated to. This also has to do with the host that
-  # we will define in the next module. But for now here we have to specify the actual name of the host to be using here. And that host name
-  # what we can do is actually go back into the Azure portal (navigate to resource group "MC_${resourcegroup}_${aksName}_${location}" -> kubernetes-${guid}
-  # which the one that match your EXTERNAL-IP, use that host name )
-  hostname: play.economy
-  # In our case, what we're going to define here is just some path that resembles or requests for the identity microservice. So in this case what we're going
-  # to use here is identity-svc. So this is the rotue that our clients will be using after specifying the host name in order to reach anything that has to do
-  # with identity microservice, you could be using any other prefix here just make sure that is is soemthing that has something to do with your microservice.
+  hostname: playeconomyapigateway.com
   prefix: /identity-svc/
-  # You need to define which is the service that the request should be routed into. So what's service is this. If you go back atually to the identity code base,
-  # you define "identity-service" in kubernetes/identity.yaml. because this is the service that provide access to the identity microservice bots. So we need
-  # to specify this service in that configuration. The only missing piece here is going to be the namespace, because these mapping configuration is not going to
-  # live in the same namespace as identity microservice. Remember that  dentity microservice lives in the identity namespace, but our mappings, and all these
-  # emissary-ingress configuration is been set in the emissary namespace. So in order to cross namespaces, you have to fix this with the name of the target
-  # namespace, in this case, it'soing to be "identity (identity-service.identity)". Okay, so just make sure you have to define this namespace because both things
-  # are not in the same namespace.
   service: identity-service.identity
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: catalog-mapping
-spec:
-  hostname: play.economy
-  prefix: /catalog-svc/
-  service: catalog-service.catalog
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: catalog-mapping
+# spec:
+#   hostname: playeconomyapigateway
+#   prefix: /catalog-svc/
+#   service: catalog-service.catalog
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: inventory-mapping
-spec:
-  hostname: play.economy
-  prefix: /inventory-svc/
-  service: inventory-service.inventory
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: inventory-mapping
+# spec:
+#   hostname: playeconomyapigateway
+#   prefix: /inventory-svc/
+#   service: inventory-service.inventory
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: trading-mapping
-spec:
-  hostname: play.economy
-  prefix: /trading-svc/
-  service: trading-service.trading
-  # Trading needs this "allow_upgrade" to allow web socket connections from the frontend portal through the gateway to the microservice
-  allow_upgrade:
-    - websocket
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: trading-mapping
+# spec:
+#   hostname: playeconomyapigateway
+#   prefix: /trading-svc/
+#   service: trading-service.trading
+#   # Trading needs this "allow_upgrade" to allow web socket connections from the frontend portal through the gateway to the microservice
+#   allow_upgrade:
+#     - websocket
 
----
-# We make sure that we do have a mapping in our Api gateway, so that the FE can be reachable at all.
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: frontend-mapping
-spec:
-  hostname: play.economy
-  # This prefix, there's not really a need to go into any sub path, because we want the frontend to live at the very root of the port of the
-  # Api gateway. So we use "/" so that FE will be reachable directly at the root.
-  prefix: /
-  # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
-  service: frontend-client.frontend
+# ---
+# # We make sure that we do have a mapping in our Api gateway, so that the FE can be reachable at all.
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: frontend-mapping
+# spec:
+#   hostname: playeconomyapigateway
+#   # This prefix, there's not really a need to go into any sub path, because we want the frontend to live at the very root of the port of the
+#   # Api gateway. So we use "/" so that FE will be reachable directly at the root.
+#   prefix: /
+#   # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
+#   service: frontend-client.frontend

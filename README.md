@@ -254,7 +254,7 @@ it means those resources are ready to go in the cluster.
 
 $emissarynamespace="emissary"
 $apiGetwayAppname="samphamplayeconomyapigateway"
-$apiGatewayAppNameLocal="play.economy"
+$apiGatewayAppNameLocal="playeconomyapigateway"
 helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
 
 helm list -n $emissarynamespace (verify Helm release from command above)
@@ -393,3 +393,63 @@ kubectl apply -f ./emissary-ingress/host.yaml -n $emissarynamespace
 
 after this step, you can use HTTPS for Api gateway and configure forwarded headers for each microservice
 ```
+
+## Run Kubernetes on local machine
+change your cust dns hostname
+On Windows, the hosts file is located at C:\Windows\System32\drivers\etc\hosts.
+On macOS and Linux, it's located at /etc/hosts.
+
+```powershell
+kubectl apply -f https://app.getambassador.io/yaml/emissary/3.8.1/emissary-crds.yaml 
+kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext -n emissary-system
+
+$emissarynamespace="emissary"
+$apiGatewayAppNameLocal="playeconomyapigateway"
+helm install emissary-ingress datawire/emissary-ingress --set nameOverride=$apiGatewayAppNameLocal -n $emissarynamespace --create-namespace
+
+helm install emissary-ingress datawire/emissary-ingress --set ingress.hostname=$apiGatewayAppNameLocal -n $emissarynamespace --create-namespace
+
+helm list -n $emissarynamespace (verify Helm release from command above)
+
+kubectl rollout status deployment/emissary-ingress -n $emissarynamespace -w
+
+kubectl get pods -n $emissarynamespace (check your pod with emissary)
+
+kubectl get service -n $emissarynamespace
+
+
+kubectl apply -f ./emissary-ingress/listener-local.yaml -n $emissarynamespace
+kubectl apply -f ./emissary-ingress/mappings-local.yaml -n $emissarynamespace
+
+helm install cert-manager jetstack/cert-manager --version v1.13.0 --set installCRDs=true --namespace $emissarynamespace
+
+kubectl get pods -n $emissarynamespace (check api gateway after run command above)
+
+kubectl apply -f ./cert-manager/cluster-issuer-local.yaml -n $emissarynamespace
+
+kubectl delete clusterissuer letsencrypt-prod -n $emissarynamespace (delete if failed)
+
+kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
+kubectl describe clusterissuer -n $emissarynamespace
+
+kubectl apply -f ./cert-manager/acme-challenge-local.yaml -n $emissarynamespace
+
+kubectl delete service acme-challenge-service -n $emissarynamespace (delete if failed)
+kubectl delete mapping acme-challenge-mapping -n $emissarynamespace (delete if failed)
+
+
+
+kubectl apply -f ./emissary-ingress/tls-certificate-local.yaml -n $emissarynamespace
+
+kubectl get certificate -n $emissarynamespace (verify your command above)
+kubectl describe certificate playeconomy-tls-cert -n $emissarynamespace (check detail your certificate)
+kubectl describe challenge -n $emissarynamespace (check your challenge success or not)
+kubectl get secret -n $emissarynamespace
+kubectl get secret playeconomy-tls -n $emissarynamespace -o yaml
+
+kubectl delete cert playeconomy-tls-cert -n $emissarynamespace (delete your tls-cert if failed)
+```
+
+
+## Check logs when the Kubernetes always in ContainerStarting or something else
+kubectl get events --sort-by=.metadata.creationTimestamp
