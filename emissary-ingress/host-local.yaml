@@ -1,0 +1,21 @@
+# Let's enable HTTPS and TLS termination in our emissary-ingress Api gateway. So the first thing that we're going to have to define here is
+# what we call a host. And a host is a resource that defines how emissary-ingress will be visible to the outside world. And it is the host
+# that we're going to specify what is the TLS certificate that should be used for our API gateway.
+apiVersion: getambassador.io/v3alpha1
+kind: Host
+metadata:
+  name: playeconomy-host
+spec:
+  # this hostname which is the same hostname that we've been using so far (tls-certificate.yaml). Remember that the hostname is also defined
+  # in mapping.yaml, it is the hostname that we'll be specified for all of our mappings and all of our microservices.
+  hostname: play.economy
+  # We have to specify another link here for the acmeProvider. This really the only thing that we need here is specify what's the email of
+  # the person that requested the acme registration.
+  acmeProvider:
+    email: phamquangson1994@gmail.com
+  # And the last thing here is to specify the TLS secret. And the we specify the name. And as you remember we already have a TLS certificate
+  # and Secret in our Kubernetes cluster. If you go back to tls-certificate.yaml. You remember that here (spec.secretName) that you're 
+  # supposed to use. So playeconomy-tls. That's all you need to do for the host.yaml, there are many more things that you could specify here
+  # but this is the bare minimum that you can use for this scenario. Let's go back to listener.yaml.
+  tlsSecret: 
+    name: playeconomy-tls

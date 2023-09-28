@@ -1,0 +1,50 @@
+# Let's use cert-manager to generate the TLS certificate that our API gateway will use to enable HTTPS and TLS termination.
+
+# The first thing that we're going to have define for cert manager is what we call an issuer. So in cert-manager, an issuer is a
+# coordinated resource that represents and certificate authorities that are able to generate sign certificates by honoring
+# certificate signing requests. Now, cert-manager supports two types of issuers, vault issuers and cluster issuers. And in our case
+#, we're going to go for a cluster issuer becuase that's the one that allows us to generate certificates accross multiple namespaces.
+# As you remember, microservices will be in different namespaces, so we need to create an issuer that can generate certicates for any
+# of those namespaces.
+
+# check the latest version here https://cert-manager.io/docs/configuration/selfsigned/
+apiVersion: cert-manager.io/v1
+# There's also an issuer type, but in our case, cluster issuer is what we want to use. Now, what is the actual certificate authority
+# that we're going to use to generate these certificates? Because somebody has to be authority behind this cert. So for the purpose 
+# of this course, the one we're going to use is the one called Let's Encrypt. Let's Encrypt is a nonprofit certificate authority
+# that provides TLS cetificates. And you want to get more information about Let's Encrypt, you can go into the Let's Encrypt homepage
+# https://letsencrypt.org/
+kind: ClusterIssuer
+metadata:
+  # the name, let's just use Let's Encrypt prod. Because we will be using the Let's Encrypt production server to issuer our cetificates
+  name: letsencrypt-prod
+spec:
+  # Here's where you have to choose the issuer type. So there are many types supported by cert manager, but the one we want to use for our
+  # scenatio is the acme server type. Now what does acme mean? So acme actually means automated certificate management environment. So an
+  # acme issuer type represents a single account registered with the acme certificate authority server. And by using this acme protocol,
+  # this server will support various challenge mechanisms for verifying the ownership of the domain that we want to use.
+  acme:
+    # The first thing we want to define for this acme issuer type is the server. So what is going to be the server that we need to use
+    # for verifying our cetificate requests? So the one that we're going to use is the production one or one of the production ones for
+    # Let's Encrypt. And that leads at https://acme-v02.api.letsencrypt.org/directory. And you can certainly find more information about
+    # this URL in the cert manager documentation.
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # You have to provide an email, with this it's going to be the email user for acme registration. So in my case, I'm just going to specify
+    # my email.
+    email: phamquangson1994@gmail.com
+    # this is going to represent the Kubernetes secret that is used to store the acme account private key, which is used to identity you,
+    # or your services with the acme server.
+    privateKeySecretRef: 
+      # the name we want to use here, in our case, let's choose a name that is resembling to this issuer. It's going to be just letsencrypt-prod.
+      # You can choose your own name here.
+      name: letsencrypt-prod
+    # The next thing to define here is what cert manager calls solvers. Like I said, the acme protocol is all about challenges. So there are
+    # challenge mechanisms to verify the ownership of a domain. So there are at least a couple of challenges that you could use here, but the one
+    # that we're going to use for the purpose of this course is the http01 channel. This one verifies the ownership of the domain by sending a 
+    # request for a specific file on that domain. And cert manager accomplishes this by sending a request to a temporary port in our Kubernetes cluster.
+    # So what you want to put here is http01, and then under this, you're going to specify ingress, and then class nginx. So this is just the syntax
+    # that you have to follow for this challenge.
+    solvers:
+      - http01:
+          ingress:
+            class: nginx

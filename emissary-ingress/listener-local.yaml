@@ -1,0 +1,51 @@
+# The first thing that we are going to need is that emissary-ingress calls a listener. So the listener defines where and how Emissary-ingress
+# should listen for requests from the network.
+apiVersion: getambassador.io/v3alpha1
+kind: Listener
+metadata:
+  name: http-listener
+spec:
+  # the port is just the port where the gateway or emissary-ingress is going to be listening for requests. This has nothing to do really with the
+  # act lock port that our clients use to connect to the gateway is just a port that internally the Api gateway, emissary-ingress is listening
+  # for requests. we will use 8080, but we can use any other port if you need to.
+  port: 8080
+  # the protocol is recommended way to tell emissary-ingress that a listener excpects connections using a well-known vertical. In our case, this
+  # is the listener for HTTP, as I already said. So the protocol we're going to use here is HTTP.
+  protocol: HTTP
+  # The security model defines how the listener will decide whether a request is secure or insecure. And the value that you would usually use here
+  # is just "XFP". This means that request will be secure if and only if the extra water product heater (or water proto header because teacher 
+  # don't pronounce it clearly) indicates HTTPS. So there's a header it's called X-Forwarded-Proto. That will come from the load balancer, and it
+  # will usually indicate either request was made with HTTP or HTTPS. So the idead of this XFP value is just to honor whatever the extroverted  
+  # proto specifies. There are other values possible for security model, but I would just recommend going with XFP because that's what mostly
+  # emissary-ingress want s you to use. All these you have a very specific reason to go with a different value.  
+  securityModel: XFP # X-Forwarded-Proto
+  # Then we'll go ahead and define the host binding. So the host binding specifies how this listener should determine which hosts are associated
+  # with it. So we won't be defining a host just yet, that will be something for the next model, but for now we have to define where are the 
+  # hosts that will be associated to this listener. Now for that what you want to specify is just a namespace
+  hostBinding:
+    namespace:
+      # SELF, this means that where we finally find a host, the only way that this listener will be able to find it is by looking for them in
+      # the same namespace, where this listener will be defined. So you will see that we will be grading this listener in a second in a
+      # specific namespace. And so whichever hosts we're going to associate to this listener, has to be in the same namespace. That's what
+      # from SELF means here.
+      from: SELF
+
+---
+# after configuring host.yaml: because what we have to do now is to specify another listener for the https traffic
+apiVersion: getambassador.io/v3alpha1
+kind: Listener
+metadata:
+  # In this case let's give it the name of https-listener
+  name: https-listener
+spec:
+  # Just as before, the port that we specify here is not the actual HTTPS port that our clients are going to use. It's just a port that 
+  # emissary-ingress uses internally so that requests can contact emissary-ingress. But in this case, it's going to be for HTTPS traffic.
+  # So you have to use a different port, so it's going to be in our case 8443
+  port: 8443
+  protocol: HTTPS
+  securityModel: XFP # X-Forwarded-Proto
+  hostBinding:
+    namespace:
+      from: SELF
+# Like I said, this listener specifies that this listener can be bound only to hosts that are defined in the very same namespace as the listener, 
+# which in our case is the emissary namespace.

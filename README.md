@@ -254,6 +254,7 @@ it means those resources are ready to go in the cluster.
 
 $emissarynamespace="emissary"
 $apiGetwayAppname="samphamplayeconomyapigateway"
+$apiGatewayAppNameLocal="play.economy"
 helm install emissary-ingress datawire/emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$apiGetwayAppname -n $emissarynamespace --create-namespace
 
 helm list -n $emissarynamespace (verify Helm release from command above)
