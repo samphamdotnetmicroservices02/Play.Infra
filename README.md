@@ -397,7 +397,7 @@ after this step, you can use HTTPS for Api gateway and configure forwarded heade
 ## Run Kubernetes on local machine
 change your cust dns hostname
 On Windows, the hosts file is located at C:\Windows\System32\drivers\etc\hosts.
-On macOS and Linux, it's located at /etc/hosts.
+On macOS and Linux, it's located at /private/etc/hosts.
 
 ```powershell
 kubectl apply -f https://app.getambassador.io/yaml/emissary/3.8.1/emissary-crds.yaml 
