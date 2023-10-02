@@ -357,8 +357,12 @@ three pods that we expect to see up and running for cert-manager.
 kubectl apply -f ./cert-manager/cluster-issuer.yaml -n $emissarynamespace
 
 kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
+kubectl describe clusterissuer -n $emissarynamespace
+kubectl delete clusterissuer letsencrypt-prod -n $emissarynamespace (delete if failed)
 
 kubectl apply -f ./cert-manager/acme-challenge.yaml -n $emissarynamespace
+kubectl delete service acme-challenge-service -n $emissarynamespace (delete if failed)
+kubectl delete mapping acme-challenge-mapping -n $emissarynamespace (delete if failed)
 ```
 
 ## Creating TLS certificate
@@ -367,8 +371,10 @@ kubectl apply -f ./emissary-ingress/tls-certificate.yaml -n $emissarynamespace
 
 kubectl get certificate -n $emissarynamespace (verify your command above)
 kubectl describe certificate playeconomy-tls-cert -n $emissarynamespace (check detail your certificate)
+kubectl describe challenge -n $emissarynamespace (check your challenge success or not)
 kubectl get secret -n $emissarynamespace
 kubectl get secret playeconomy-tls -n $emissarynamespace -o yaml
+kubectl delete cert playeconomy-tls-cert -n $emissarynamespace (delete your tls-cert if failed)
 ```
 
 "kubectl apply -f ./emissary-ingress/tls-certificate.yaml ...": This will kick off the whole process of the acme challenge, acme http01 challenge. 
@@ -421,33 +427,13 @@ kubectl get service -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/listener-local.yaml -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/mappings-local.yaml -n $emissarynamespace
 
-helm install cert-manager jetstack/cert-manager --version v1.13.0 --set installCRDs=true --namespace $emissarynamespace
-
-kubectl get pods -n $emissarynamespace (check api gateway after run command above)
-
-kubectl apply -f ./cert-manager/cluster-issuer-local.yaml -n $emissarynamespace
-
-kubectl delete clusterissuer letsencrypt-prod -n $emissarynamespace (delete if failed)
 
 kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
 kubectl describe clusterissuer -n $emissarynamespace
 
-kubectl apply -f ./cert-manager/acme-challenge-local.yaml -n $emissarynamespace
-
-kubectl delete service acme-challenge-service -n $emissarynamespace (delete if failed)
-kubectl delete mapping acme-challenge-mapping -n $emissarynamespace (delete if failed)
-
-
-
 kubectl apply -f ./emissary-ingress/tls-certificate-local.yaml -n $emissarynamespace
 
-kubectl get certificate -n $emissarynamespace (verify your command above)
-kubectl describe certificate playeconomy-tls-cert -n $emissarynamespace (check detail your certificate)
-kubectl describe challenge -n $emissarynamespace (check your challenge success or not)
-kubectl get secret -n $emissarynamespace
-kubectl get secret playeconomy-tls -n $emissarynamespace -o yaml
-
-kubectl delete cert playeconomy-tls-cert -n $emissarynamespace (delete your tls-cert if failed)
+kubectl apply -f ./emissary-ingress/host-local.yaml -n $emissarynamespace
 ```
 
 

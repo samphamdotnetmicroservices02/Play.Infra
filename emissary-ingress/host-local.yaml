@@ -4,7 +4,3 @@ metadata:
   name: playeconomy-host
 spec:
   hostname: playeconomyapigateway.com
-#  acmeProvider:
-#   email: phamquangson1994@gmail.com
-#  tlsSecret: 
-#    name: playeconomy-tls
