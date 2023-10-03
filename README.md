@@ -413,7 +413,12 @@ $emissarynamespace="emissary"
 $apiGatewayAppNameLocal="playeconomyapigateway"
 helm install emissary-ingress datawire/emissary-ingress --set nameOverride=$apiGatewayAppNameLocal -n $emissarynamespace --create-namespace
 
+For mac
 helm install emissary-ingress datawire/emissary-ingress --set ingress.hostname=$apiGatewayAppNameLocal -n $emissarynamespace --create-namespace
+
+For window (because when running docker on wondow the "wslrelay.exe" and "com.docker.backend.exe" will use the port 443. Hence when we install emissary-ingress
+through the command line below, it will return an error - Run this command line to see the result " ")
+helm install emissary-ingress datawire/emissary-ingress --set ingress.hostname=$apiGatewayAppNameLocal,ingress.port=8443 -n $emissarynamespace --create-namespace
 
 helm list -n $emissarynamespace (verify Helm release from command above)
 
@@ -427,15 +432,15 @@ kubectl get service -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/listener-local.yaml -n $emissarynamespace
 kubectl apply -f ./emissary-ingress/mappings-local.yaml -n $emissarynamespace
 
-
-kubectl get clusterissuer -n $emissarynamespace (check your result from command above)
-kubectl describe clusterissuer -n $emissarynamespace
-
-kubectl apply -f ./emissary-ingress/tls-certificate-local.yaml -n $emissarynamespace
-
 kubectl apply -f ./emissary-ingress/host-local.yaml -n $emissarynamespace
 ```
 
 
 ## Check logs when the Kubernetes always in ContainerStarting or something else
 kubectl get events --sort-by=.metadata.creationTimestamp
+
+## Set service for yaml file
+kubectl edit service emissary-ingress -n $emissarynamespace
+
+## Check log cluster
+kubectl cluster-info dump

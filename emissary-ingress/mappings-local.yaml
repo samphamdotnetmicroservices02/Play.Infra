@@ -7,49 +7,50 @@ spec:
   prefix: /identity-svc/
   service: identity-service.identity
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: catalog-mapping
-spec:
-  hostname: playeconomyapigateway.com
-  prefix: /catalog-svc/
-  service: catalog-service.catalog
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: inventory-mapping
-spec:
-  hostname: playeconomyapigateway.com
-  prefix: /inventory-svc/
-  service: inventory-service.inventory
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: catalog-mapping
+# spec:
+#   hostname: playeconomyapigateway.com
+#   prefix: /catalog-svc/
+#   service: catalog-service.catalog
 
----
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: trading-mapping
-spec:
-  hostname: playeconomyapigateway.com
-  prefix: /trading-svc/
-  service: trading-service.trading
-  # Trading needs this "allow_upgrade" to allow web socket connections from the frontend portal through the gateway to the microservice
-  allow_upgrade:
-    - websocket
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: inventory-mapping
+# spec:
+#   hostname: playeconomyapigateway.com
+#   prefix: /inventory-svc/
+#   service: inventory-service.inventory
 
----
-# We make sure that we do have a mapping in our Api gateway, so that the FE can be reachable at all.
-apiVersion: getambassador.io/v3alpha1
-kind: Mapping
-metadata:
-  name: frontend-mapping
-spec:
-  hostname: playeconomyapigateway.com
-  # This prefix, there's not really a need to go into any sub path, because we want the frontend to live at the very root of the port of the
-  # Api gateway. So we use "/" so that FE will be reachable directly at the root.
-  prefix: /
-  # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
-  service: frontend-client.frontend
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: trading-mapping
+# spec:
+#   hostname: playeconomyapigateway.com
+#   prefix: /trading-svc/
+#   service: trading-service.trading
+#   # Trading needs this "allow_upgrade" to allow web socket connections from the frontend portal through the gateway to the microservice
+#   allow_upgrade:
+#     - websocket
+
+# ---
+# # We make sure that we do have a mapping in our Api gateway, so that the FE can be reachable at all.
+# apiVersion: getambassador.io/v3alpha1
+# kind: Mapping
+# metadata:
+#   name: frontend-mapping
+# spec:
+#   hostname: playeconomyapigateway.com
+#   # This prefix, there's not really a need to go into any sub path, because we want the frontend to live at the very root of the port of the
+#   # Api gateway. So we use "/" so that FE will be reachable directly at the root.
+#   prefix: /
+#   # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
+#   service: frontend-client.frontend
