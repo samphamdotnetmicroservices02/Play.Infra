@@ -7,16 +7,15 @@ spec:
   prefix: /identity-svc/
   service: identity-service.identity
 
-
-# ---
-# apiVersion: getambassador.io/v3alpha1
-# kind: Mapping
-# metadata:
-#   name: catalog-mapping
-# spec:
-#   hostname: playeconomyapigateway.com
-#   prefix: /catalog-svc/
-#   service: catalog-service.catalog
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: catalog-mapping
+spec:
+  hostname: playeconomyapigateway.com
+  prefix: /catalog-svc/
+  service: catalog-service.catalog
 
 # ---
 # apiVersion: getambassador.io/v3alpha1
