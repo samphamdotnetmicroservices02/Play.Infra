@@ -444,3 +444,37 @@ kubectl edit service emissary-ingress -n $emissarynamespace
 
 ## Check log cluster
 kubectl cluster-info dump
+
+## Packaging and publishing the microservice Helm chart
+The first instruction that we have to follow here is the one that you used to package the helm chart. So the helm chart itself
+has to be packaged in to a compressed file that later on you can go ahead and push or publish into the ACR
+```powershell
+helm package ./helm/microservice
+
+$helmUser=[guid]::Empty.Guid (or helmUser=00000000-0000-0000-0000-000000000000)
+$helmPassword=az acr login --name $acrName --expose-token --output tsv --query accessToken
+
+helm registry login "$acrName.azurecr.io" --username $helmUser --password $helmPassword (login to ACR)
+
+helm push microservice-0.1.0.tgz oci://$acrName.azurecr.io/helm
+```
+- $helmUser ...: Because we're going to acr, so we don't need to specify which username here. But we need to follow the
+convention, so we put Guid.Empty in the username.
+- $helmPassword ...: get password to login acr, --output tsv: the format from the output "--expose-token" is not approiate 
+to be used as the argument for the next line. So let's actually modify the output a little bit by using the "--output tsv"
+argument. So that it will give you a string that we can use in the next command.
+- --query accessToken: accessToken is one component of that output. So we only get only that piece as a string that we can 
+user later on
+- helm push ...: push your compressed helm file to ACR. "oci" the format that you need to use to address the actual container
+registry has to start with oci://$acrName.azurecr.io/helm. After pushing to ACR, you can verify that on Repositories -> 
+helm/microservice
+
+```mac
+helm package ./helm/microservice
+
+helmUser=00000000-0000-0000-0000-000000000000
+export helmPassword="$(az acr login --name $acrName --expose-token --output tsv --query accessToken)"
+
+helm registry login "$acrName.azurecr.io" --username $helmUser --password $helmPassword (login to ACR)
+helm push microservice-0.1.0.tgz oci://$acrName.azurecr.io/helm
+```
