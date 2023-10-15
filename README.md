@@ -11,7 +11,7 @@ dotnet nuget add source --username USERNAME --password $gh_pat --store-password-
 dotnet nuget list source (check result)
 ```
 
-```mac
+```zsh
 owner="samphamdotnetmicroservices02"
 gh_pat="[PAT HERE]"
 
@@ -60,7 +60,7 @@ to be actually sharing a bunch of things as you are going to see. So I am just g
 which is going to be these play economy resource group.
 ```
 
-```mac
+```zsh
 appname="playeconomy"
 az group create --name $appname --location eastus
 ```
@@ -94,7 +94,7 @@ check your mongo db on azure by navigate to subscriptions -> Resource groups -> 
 see the "samphamplayeconomy" which is your cosmos db
 ```
 
-```mac
+```zsh
 dbAccountName="samphamplayeconomy"
 az cosmosdb create --name $dbAccountName --resource-group $appname --kind MongoDB --enable-free-tier
 ```
@@ -115,7 +115,7 @@ you have to use at least the Standard SKU, so that you are able to use MassTrans
 to check service bus you just created, navigate to subscription -> your resource group -> samphamplayeconomyservicebus
 ```
 
-```mac
+```zsh
 serviceBusName="samphamplayeconomyservicebus"
 az servicebus namespace create --name $serviceBusName --resource-group $appname --sku Standard
 ```
@@ -135,7 +135,7 @@ production workload, you may want to consider using the standard SKU, because it
 images of which you are going to grade a lot and increase it throughput to pull ambush images.
 ```
 
-```mac
+```zsh
 acrName="samphamplayeconomyacr"
 az acr create --name $acrName --resource-group $appname --sku Basic
 ```
@@ -199,7 +199,7 @@ kubectl cluster-info: to check that things are working properly. This will give 
 like the Kubernetes control plane, core DNS, metric server 
 ```
 
-```mac
+```zsh
 aksName="samphamplayeconomyaks"
 
 az aks create -n $aksName -g $appname --node-vm-size Standard_B2s --node-count 2 --attach-acr $acrName --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys
@@ -297,7 +297,7 @@ group -> hit "MC_${resource_group}_${aksName}_${location}", there are many "kube
 Api gateway for example EXTERNAL-IP is "20.237.70.13", and next to "IP address" is DNS name.
 ```
 
-```mac
+```zsh
 helm repo add datawire https://app.getambassador.io (confirm that by using "helm repo list")
 helm repo update
 
@@ -469,7 +469,7 @@ user later on
 registry has to start with oci://$acrName.azurecr.io/helm. After pushing to ACR, you can verify that on Repositories -> 
 helm/microservice
 
-```mac
+```zsh
 helm package ./helm/microservice
 
 helmUser=00000000-0000-0000-0000-000000000000
