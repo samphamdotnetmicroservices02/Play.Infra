@@ -478,3 +478,39 @@ export helmPassword="$(az acr login --name $acrName --expose-token --output tsv 
 helm registry login "$acrName.azurecr.io" --username $helmUser --password $helmPassword (login to ACR)
 helm push microservice-0.1.0.tgz oci://$acrName.azurecr.io/helm
 ```
+
+## Create github service principal
+In order to authenticate our Github repository into Azure, what we need to do is to define a service principal
+which represents kind of an identity for Github repository in Azure subscription.
+```powershell
+$resourceGroupId=az group show --name $appname --query id --output tsv
+$appId=az ad sp create-for-rbac -n "GitHub" --query appId --output tsv
+or
+$appId=az ad sp create-for-rbac -n "GitHub" --scopes $resourceGroupId --role Contributor --query appId --output tsv
+
+"scope is required for creating role assignment in fall of 2023."
+$ACR_ID=$(az acr show --name $ACR_NAME --query id --output tsv)
+az role assignment create --assignee $appId --role "AcrPush" --resource-group $appname
+or
+az role assignment create --assignee $appId --role "AcrPush" --scope $ACR_ID --resource-group $appname
+
+az role assignment create --assignee $appId --role "Azure Kubernetes Service Cluster User Role" --resource-group $appname
+az role assignment create --assignee $appId --role "Azure Kubernetes Service Contributor Role" --resource-group $appname
+
+One more thing you need to do is to establish what is named as federated credentials. What we have to specify "add new a new credential" that defines the specific details about the repository that needs to get access via this application into Azure. Navigating to your Azure Directory --> click on "GitHub" service principal --> click on Certificates & secrets --> Federated credentials --> click on Add credential --> select "GitHub Actions deploying Azure resources" --> fill out some information: organization: "samphamdotnetmicroservices02", repository: "Play.Identity" (your repository name), Entity type: "Branch" (whenever we make changes to "main" branch the github publish to Azure), Github branch name: "main". Credential details section, name: "Play.Identity", description: "Identity microservice repository". Click on Add.
+```
+- az ad sp create-for-rbac: "ad": Azure Directory, "sp": Service Principal, "create-for-rbac" meaning that this service principal is going to be created for the purposes of role based access control. "-n 'GitHub'":  you can pick any name, we pick "GitHub" because this is going to represent the Github repository in the Azure subscription. "query": we want to query just one element which is the appId , and then to make sure that we get it in a format which is a very simple string which is what we need in that variable there, we're going to say "--output tsv"
+- "az role assignment create": give role assignments to this service principal, so that it can perform the necessary actions that our Github workflow needs. "--assignee": is that identity or the service principal that's going to receive the assignment. In this case, that will be our $appId. "--role": is the definition of the set of permissions that this assignee should receive.
+There are three specific roles that we're going to need in the case of our Github workflow. The first one is "AcrPush", this is a role that allows whoever has this role to push docker images into Azure Container Registry. "Azure Kubernetes Service Cluster User Role" retrieve information of how to connect to the Kubernetes cluster. "Azure Kubernetes Service Contributor Role" is the one we actually deploy or create resources in the Kubernetes cluster, this allows the Github action or the service principal in this case to be able to create resources in Kubernetes cluster.
+
+- Verify your Azure Directory by navigate to Microsoft Entra ID (or Azure Active Directory) --> App Registrations (you will see the "Github" on display name column)
+- Verify your role by navigating your resource group --> Access Control (IAM) --> Role assignments. You will see three roles such as "AcrPush", "Azure Kubernetes Service Cluster User Role", "Azure Kubernetes Service Contributor Role"
+```zsh
+resourceGroupId=$(az group show --name $appname --query id --output tsv)
+export appId="$(az ad sp create-for-rbac -n "GitHub" --query appId --output tsv)"
+or
+export appId="$(az ad sp create-for-rbac -n "GitHub" --scopes $resourceGroupId --role Contributor --query appId --output tsv)"
+
+az role assignment create --assignee $appId --role "Azure Kubernetes Service Cluster User Role" --resource-group $appname
+az role assignment create --assignee $appId --role "Azure Kubernetes Service Contributor Role" --resource-group $appname
+```
