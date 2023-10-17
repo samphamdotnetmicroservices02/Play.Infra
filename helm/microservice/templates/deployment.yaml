@@ -25,7 +25,8 @@ spec:
             # keys and values that you find in there, you're going to place them into a combination of name and value
             {{- range $key, $value := .Values.envVariables }}
             - name: {{ $key }}
-              value: {{ $value }}
+              # if the value is number, we use "| quote" to surround the value by ""
+              value: {{ $value | quote }}
             {{- end }}
           resources:
             # toYaml is a function that is included in this helm chart language. You need to define the indentation by using "| nindent 12"

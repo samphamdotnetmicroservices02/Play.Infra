@@ -29,6 +29,8 @@ envVariables:
   # "ServiceSettings__MessageBroker" is a key, "SERVICEBUS" is a value
   ServiceSettings__MessageBroker: SERVICEBUS
   ServiceSettings__KeyVaultName: samphamplayeconomykv
+  SeqSettings__Host: seq.observability
+  SeqSettings__Port: 5341
 
 # we expect all microservices has the same memory and cpu, so we define this here
 resources:
