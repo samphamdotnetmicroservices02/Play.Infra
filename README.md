@@ -515,3 +515,16 @@ export appId="$(az ad sp create-for-rbac -n "GitHub" --scopes $resourceGroupId -
 az role assignment create --assignee $appId --role "Azure Kubernetes Service Cluster User Role" --resource-group $appname
 az role assignment create --assignee $appId --role "Azure Kubernetes Service Contributor Role" --resource-group $appname
 ```
+
+## Deploying Seq to AKS
+```powershell
+helm repo add datalust https://helm.datalust.co
+helm repo update
+
+helm install seq datalust/seq -n observability --create-namespace
+kubectl get pods -n observability (verify your seq)
+kubectl get services -n observability (get service)
+```
+- -n observability: we choose this name because everything deal with observability, monitoring, tracing, etc.
+- --create-namespace: create namespace if it does not exist
+- after calling "helm install": we receive the internal service of seq "seq.observability.svc.cluster.local"

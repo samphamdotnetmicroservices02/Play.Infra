@@ -70,3 +70,14 @@ spec:
   prefix: /
   # "frontend-client" gets from frontend project/helm/templates/service.yaml/metadata.name and the "metadata.name" gets from helm/Chart.yaml/name
   service: frontend-client.frontend
+
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: seq-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  prefix: /seq/
+  # run "kubectl get services -n observability" to get the name of service
+  service: seq.observability
