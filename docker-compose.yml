@@ -36,6 +36,7 @@ services:
       # go into our seqdara volume
       - seqdata:/data
 
+  # https://www.jaegertracing.io/docs/1.6/getting-started/
   jaeger:
     # it's called all in one because Jaeger is actually composed of multiple components. It's a very interesting system. It has tons of components
     # in there, but this docker-image here includes all of those components in just one image. So it makes it very straightforward to use in your box.
@@ -43,11 +44,14 @@ services:
     # kind of a very complex scenario. For our case, for our learning purposes, the only one image is all we need to use.
     image: jaegertracing/all-in-one
     container_name: jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
     ports:
-      - 5778:5778
-      - 6821:6821/udp
+      - 5775:5775/udp
+      - 6831:6831/udp
       - 6832:6832/udp
-      - 14250:14250
+      - 5778:5778
+      - 9411:9411
       - 14268:14268
 
       # use to browse in Jaeger tracing portal.
