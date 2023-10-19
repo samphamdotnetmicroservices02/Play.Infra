@@ -7,7 +7,7 @@ allInOne:
   enabled: true
   # What we have to do is set up one extra environment variable which is the one that is going to tell Jaeger that it is going to be running
   # in a sub path of our play economy host. If we don't do that, then Jaeger is going to get confused. And it's not going to be able to
-  # present the U properly when we launch it into the slash Jaeger sub path that we are going to be needing there.
+  # present the UI properly when we launch it into the slash Jaeger sub path that we are going to be needing there.
   extraEnv:
     - name: QUERY_BASE_PATH
       # this is the path that we are going to enable in a moment in our mappings file. And that's where Jaeger should always be able to find
