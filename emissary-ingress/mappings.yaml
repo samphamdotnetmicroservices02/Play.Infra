@@ -81,3 +81,15 @@ spec:
   prefix: /seq/
   # run "kubectl get services -n observability" to get the name of service
   service: seq.observability
+
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: jaeger-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  prefix: /jaeger/
+  rewrite: ""
+  # run "kubectl get services -n observability" to get the name of service
+  service: jaeger-query.observability:16686

@@ -518,13 +518,24 @@ az role assignment create --assignee $appId --role "Azure Kubernetes Service Con
 
 ## Deploying Seq to AKS
 ```powershell
+$observabilityNamespace="observability"
 helm repo add datalust https://helm.datalust.co
 helm repo update
 
-helm install seq datalust/seq -n observability --create-namespace
+helm install seq datalust/seq -n $observabilityNamespace --create-namespace
 kubectl get pods -n observability (verify your seq)
 kubectl get services -n observability (get service)
 ```
 - -n observability: we choose this name because everything deal with observability, monitoring, tracing, etc.
 - --create-namespace: create namespace if it does not exist
 - after calling "helm install": we receive the internal service of seq "seq.observability.svc.cluster.local"
+
+
+## Deploy Jaeger to AKS
+```powershell
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+
+helm upgrade jaeger jaegertracing/jaeger --values ./jaeger/values.yaml -n $observabilityNamespace --install
+kubectl get pods -n $observabilityNamespace (verify your command)
+```
