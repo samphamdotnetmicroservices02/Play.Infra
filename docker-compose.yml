@@ -47,6 +47,7 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HTTP_PORT=9411
       - COLLECTOR_OTLP_ENABLED=true
+    # https://stackoverflow.com/questions/71762905/jaeger-not-receiving-any-opentelemetry-trace
     ports:
       - 5775:5775/udp
       - 6831:6831/udp
