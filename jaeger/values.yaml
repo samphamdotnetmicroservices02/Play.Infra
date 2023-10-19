@@ -1,11 +1,22 @@
 # https://github.com/jaegertracing/helm-charts/tree/main/charts/jaeger
 
 # this is memory configuration
+
+# we turn off the cassandra, storage, agent, collector, query for memory configuration.
 allInOne:
   enabled: true
+  # What we have to do is set up one extra environment variable which is the one that is going to tell Jaeger that it is going to be running
+  # in a sub path of our play economy host. If we don't do that, then Jaeger is going to get confused. And it's not going to be able to
+  # present the U properly when we launch it into the slash Jaeger sub path that we are going to be needing there.
   extraEnv:
     - name: QUERY_BASE_PATH
+      # this is the path that we are going to enable in a moment in our mappings file. And that's where Jaeger should always be able to find
+      # its deployment
       value: /jaeger
+  # We set ingress's enabled property to false because Jaeger has its own way of setting up an Ingress controller so that you can access it from
+  # the outside world. But in our case, we are already using the emissary-ingress API gateway which is kind of our ingress component in our AKS
+  # architecture. And so we don't need Jaeger to set yet another Ingress component for this. This kind of optional but I thought that we just
+  # it's no ideal to have this set it up when we don't really need it.
   ingress:
     enabled: false
 provisionDataStore:

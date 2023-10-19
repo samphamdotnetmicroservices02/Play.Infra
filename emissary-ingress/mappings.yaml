@@ -90,6 +90,13 @@ metadata:
 spec: 
   hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
   prefix: /jaeger/
+  # We do need to rewrite clause here to be just empty. So to make sure that the Urls that are going to go through this mapping do not
+  # get modified in anyway. So they should be taken as is otherwise Jaeger is not going to be able to understand the requests are 
+  # coming into it. They should go just as is.
   rewrite: ""
   # run "kubectl get services -n observability" to get the name of service
+  # we have a bunch of jaeger services. But the one that you're interested in is the one called jaeger-query. This is the service that 
+  # gives access to the Jaeger UI.
+  # This service is running in a very specific port and that port is 16686 and this one right here (run "kubectl get services -n observability")
+  # So you need to specify that port over here so that the mapping knows exactly into which port it should point.
   service: jaeger-query.observability:16686

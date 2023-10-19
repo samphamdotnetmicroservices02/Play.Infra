@@ -539,3 +539,5 @@ helm repo update
 helm upgrade jaeger jaegertracing/jaeger --values ./jaeger/values.yaml -n $observabilityNamespace --install
 kubectl get pods -n $observabilityNamespace (verify your command)
 ```
+- helm repo add jaegertracing: jaegertracing is the name of the repository.
+- jaegertracing/jaeger: this the repo that we need
