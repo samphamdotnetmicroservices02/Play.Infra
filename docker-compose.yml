@@ -46,13 +46,18 @@ services:
     container_name: jaeger
     environment:
       - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
       - 5775:5775/udp
       - 6831:6831/udp
       - 6832:6832/udp
       - 5778:5778
       - 9411:9411
+      - 14250:14250
       - 14268:14268
+      - 4317:4317
+      - 4318:4318
+      - 14269:14269
 
       # use to browse in Jaeger tracing portal.
       - 16686:16686
