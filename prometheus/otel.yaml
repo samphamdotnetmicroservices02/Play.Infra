@@ -1,0 +1,5 @@
+# Prometheus is a very popular monitoring and alerting solution that is capable of collecting and storing your microservice metrics,
+# so that later you can perform powerful queries on them. Prometheus is a hundred percent open source. It is community driven and 
+# is part of the cloud native foundation. You can learn more about Prometheus at https://prometheus.io where you'll find plenty of
+# docs on the available features and how to get started. It is very straightforward to run a Prometheus server in your box via
+# docker and simple configuration file.
