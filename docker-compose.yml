@@ -63,8 +63,23 @@ services:
       # use to browse in Jaeger tracing portal.
       - 16686:16686
       
-
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      # the first volume that we have to define is the one that is going to point into our brand new otel.yaml file. So we 
+      # have to map the file that is in our host into the location where Prometheus can find that file from within the
+      # docker container (./prometheus/otel.yaml). And then it has to map into the location where Prometheus knows to look
+      # for this file. So that would be under "/etc/prometheus/prometheus.yml"
+      - ./prometheus/otel.yaml:/etc/prometheus/prometheus.yml
+      # The next volume is the volume where Prometheus itself is going to store its own data. So it's going to keep track
+      # of data. So for that, just like we have done for other services, we have to define another volume in our box 
+      # (prometheusdata). So we are going to mount into the our volume section here
+      - prometheusdata:/prometheus
 volumes: 
   mongodbdata: 
   rabbitmqdata:
   seqdata:
+  prometheusdata:
