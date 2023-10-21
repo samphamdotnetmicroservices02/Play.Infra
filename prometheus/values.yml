@@ -1,0 +1,31 @@
+# https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+prometheus:
+  prometheusSpec:
+    scrape_interval: 10s
+    # We need to specify here is one that we actually need to makee sure that Prometheus can run properly when run behind our Api Gateway. Remember
+    # that we will be able to access Prometheus via Emissary Ingress apigateway. We will assign a specific sub path or sub endpoint under our route
+    # host name, but to make sure that Prometheus does not get confused by the fact that it's running behind the gateway, we have to add this
+    # specific configuration here, which is called "externalUrl". And the external URL will specify that sub path that we are going to assign
+    # for Prometheus and that's going to be just "/prometheus"
+    externalUrl: "/prometheus"
+    # The last value that we will specify under Prometheus' spec is one called ServiceMonitorSelectorNilUsesHelmValues. Now you want to specify a
+    # value of false for this one. Now what this setting does is that it will allow Prometheus to go ahead and discover different target endpoints
+    # for monitoring beyond and out of deployment of this Prometheus Helm chart itself. Because this chart does come already with a few service
+    # monitors, but we want to let it go ahead and go ahead and look for any other service monitors. And in our case, it's going to be the monitor
+    # for our microservices and to do that, we need to set this setting into false, but there's more information about this setting in the README
+    # for the chart itself if you want to take a look.
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+grafana:
+  # So this is going to provide values to the Grafana INI file that match our current deployment.
+  grafana.ini:
+    # So here we want to specify server
+    server:
+      # here we want to specify two values. The first value is going to be called "root_url". And so just like we did with the externalUrl setting for
+      # Prometheus, we have to define this setting here, and the next one we're going to add later, so that Grafana understands that it is going to 
+      # be running behind our Api gateway. And not at the very root. Now this setting here is a little bit, I mean the same test is a bit complex,
+      # this is how the setting should look like "%(protocal)s://%(domain)s/grafana"
+      root_url: "%(protocal)s://%(domain)s/grafana"
+      # The next setting is the one called "serve_from_sub_path" and they should have true. Because indeed Grafana is going to be running in a sub path
+      # of our complete deployment into AKS
+      serve_from_sub_path: true

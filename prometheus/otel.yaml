@@ -1,21 +1,21 @@
 # Prometheus is a very popular monitoring and alerting solution that is capable of collecting and storing your microservice metrics,
-# so that later you can perform powerful queries on them. Prometheus is a hundred percent open source. It is community driven and 
+# so that later you can perform powerful queries on them. Prometheus is a hundred percent open source. It is community driven and
 # is part of the cloud native foundation. You can learn more about Prometheus at https://prometheus.io where you'll find plenty of
 # docs on the available features and how to get started. It is very straightforward to run a Prometheus server in your box via
 # docker and simple configuration file.
-# A Configuration here is for Prometheus. So this is going to be the file that's going to determine a few details about our 
+# A Configuration here is for Prometheus. So this is going to be the file that's going to determine a few details about our
 # Prometheus server. Things like how frquently Prometheus is going to be scraping our endpoint where we're exposing the metrics
 # and which are the actual targets that Prometheus is going to scrape for monitoring data. "otel.yaml" with otel stands for OpenTelemetry
 
 global:
   # scrape interval, this his how frequently Prometheus is going to be looking for information into our microservice, for metrics information
   # Notice that this is kind of different from any other of the infrastructure services that we have run so far where usually it
-  # is our microservice that talks to the infrastructure service, like that happens with MongoDb or RabbitMQ or Seq. But in this 
+  # is our microservice that talks to the infrastructure service, like that happens with MongoDb or RabbitMQ or Seq. But in this
   # case, it is Prometheus that is going to be talking into our microservice to collect that metrics data. So that's a little bit
   # different than before.
   scrape_interval: 10s
 
-# scrape_configs is what you define, which are going to be the jobs that define which are going to be the targets to collect 
+# scrape_configs is what you define, which are going to be the jobs that define which are going to be the targets to collect
 # monitoring data from. So each on these scrap configs you want to define what we call a job.
 scrape_configs:
   - job_name: "otel"
@@ -25,14 +25,15 @@ scrape_configs:
       # metrics data from.
       # Remember that our trading microservice is running in localhost:5006, and then that's where we have our scrape endpoint
       # in order forward slash metrics. So we have to tell that the Prometheus that is has to look into this localtion (localhist:5006/metrics)
-      # Now insterestingly, since we'll be running Prometheus within a docker container, the location of locahost:5006 does not 
+      # Now insterestingly, since we'll be running Prometheus within a docker container, the location of locahost:5006 does not
       # really make much sense. So we cannot just say localhost:5006, because since Prometheus runs inside a docker container, it
       # is not aware of things that are going on outside of the docker container. Like in this case, I'm just running my trading
       # microservice in my localbox, it is not running in a docker container. So if I just put localhost:5006 in that configuration,
       # it is not going to be able to locate it. It is running outside of a docker container and we don't have an network here set
       # up for that instance. So what we can do instead is the following. Over here, where we would put the location or the address
-      # of our identity microservice we're going to be using instead this "host.docker.internal:5006". This will allow the 
+      # of our identity microservice we're going to be using instead this "host.docker.internal:5006". This will allow the
       # Prometheus docker container to kind of reach out into what's running outside of the docker container and into the host machine
       # in this case, my dev box. And then whatever is running in port 5006. So this is how you can get out of your docker container
       # and into a process that is running outside of the dev box
       - targets: ["host.docker.internal:5006"]
+# This will run from docker-compose in local docker container.

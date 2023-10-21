@@ -541,3 +541,17 @@ kubectl get pods -n $observabilityNamespace (verify your command)
 ```
 - helm repo add jaegertracing: jaegertracing is the name of the repository.
 - jaegertracing/jaeger: this the repo that we need
+
+
+Not deploy to AKS yet.
+## Deploy Prometheus and Grafana
+```powershell
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm upgrade prometheus prometheus-community/kube-prometheus-stack --values ./prometheus/values.yml -n $observabilityNamespace --install
+kubectl --namespace $observabilityNamespace get pods -l "release=prometheus"
+```
+- "kubectl ... "release=prometheus"": verify the status of the pods. When you run the command "helm upgrade ...", you will receive
+this command.
+- password by default when logging in Grafana is admin/promp-operator

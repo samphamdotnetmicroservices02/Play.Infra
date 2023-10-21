@@ -100,3 +100,30 @@ spec:
   # This service is running in a very specific port and that port is 16686 and this one right here (run "kubectl get services -n observability")
   # So you need to specify that port over here so that the mapping knows exactly into which port it should point.
   service: jaeger-query.observability:16686
+
+---
+# Mapping for Prometheus
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: prometheus-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  prefix: /prometheus/
+  # run "kubectl get services -n observability" to get the name of service. The one we use for the prometheus is the 9090 port,
+  #  this is the port that we can access to UI and the name of that prometheus service is "prometheus-operated"
+  service: prometheus-operated.observability:9090
+
+---
+# Mapping for  Grafana
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: grafana-mapping
+spec: 
+  hostname: samphamplayeconomyapigateway.eastus.cloudapp.azure.com
+  prefix: /grafana/
+  # run "kubectl get services -n observability" to get the name of service. The one we use for the grafana is the 80 port,
+  # and the name of that grafana is "prometheus-grafana". We don't need to specify a port, because it's going to be running
+  # in the default port 80.
+  service: prometheus-grafana.observability
