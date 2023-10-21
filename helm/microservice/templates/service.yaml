@@ -2,10 +2,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: "{{.Values.microserviceName}}-service"
+  labels:
+    # Prometheus and Grafana in cloud
+    # it could be anything you want here, I choose "appType". "{{.Chart.Name}}" this variable here is a built-in variable of Helm
+    # it will get from chart.yaml and name property
+    appType: {{.Chart.Name}}
 spec:
   type: {{.Values.service.type}}
   selector:
     app: {{.Values.microserviceName}}
   ports:
-    - port: {{.Values.service.port}}
+    # Prometheus and Grafana in cloud
+    # the name of this port. we call that "http" because this is the port that we use for HTTP access for microservices. The reason
+    # why we're making these changes (labels, name of port) is because we need these two for the next resource that we're going to
+    # create that is called a servicemonitor (servicemonitor.yaml). The service monitor is going to need these two values from 
+    # our services so that it can properly target them.
+    - name: http
+
+      port: {{.Values.service.port}}
       targetPort: {{.Values.container.port}}

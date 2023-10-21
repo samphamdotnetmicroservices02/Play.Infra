@@ -1,0 +1,29 @@
+# Prometheus and Grafana in cloud
+# this service monitor is a custom resource that was introduced when we installed the Prometheus Helm chart in the previous lesson.
+# That Helm chart brought in a few custom resources, including the service monitor. The service monitor is the resource that
+# allows the Prometheus operator that also comes as part of that Helm chart, allows operator to discover our microservices or
+# additional targets in the cluster. So that's how we can very easily add new microservices with monitor automatically into 
+# the cluster without having to do any further manual configuration in Prometheus.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: 
+  name: "{{.Values.microserviceName}}-servicemonitor"
+  labels:
+    appType: {{.Chart.Name}}
+spec:
+  selector: 
+    # this is what we use to define how is this resource going to select other resources. In this case, we need to tell the
+    # service monitor how to locate the service that it needs to target, that it needs to monitor.
+    matchLabels:
+      # this is important, here is where we are making this connection between the monitor and the service, right here where
+      # we say you have to select specifically any service that matches the appType of microservice in this case. That's how
+      # it is going to connect to this service over here (service.yaml) because we have appType label
+      - appType: {{.Chart.Name}}
+  
+  # One more thing we need here is the endpoint. We have to specify which is the endpoint in that selected service that the monitor
+  # needs to use to go ahead and reach out to the metrics-scraping endpoint. Remember that there is a scraping endpoint that our
+  # microservices are exposing under "/metrics". And so we need to tell the monitor in which port that endpoint lives.
+  # "port: http" http comes from service.yaml (ports.name)
+  endpoints:
+    - port: http 
+    

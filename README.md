@@ -456,7 +456,7 @@ $helmPassword=az acr login --name $acrName --expose-token --output tsv --query a
 
 helm registry login "$acrName.azurecr.io" --username $helmUser --password $helmPassword (login to ACR)
 
-helm push microservice-0.1.2.tgz oci://$acrName.azurecr.io/helm
+helm push microservice-0.1.3.tgz oci://$acrName.azurecr.io/helm
 ```
 - $helmUser ...: Because we're going to acr, so we don't need to specify which username here. But we need to follow the
 convention, so we put Guid.Empty in the username.
@@ -476,7 +476,7 @@ helmUser=00000000-0000-0000-0000-000000000000
 export helmPassword="$(az acr login --name $acrName --expose-token --output tsv --query accessToken)"
 
 helm registry login "$acrName.azurecr.io" --username $helmUser --password $helmPassword (login to ACR)
-helm push microservice-0.1.2.tgz oci://$acrName.azurecr.io/helm
+helm push microservice-0.1.3.tgz oci://$acrName.azurecr.io/helm
 ```
 
 ## Create github service principal
